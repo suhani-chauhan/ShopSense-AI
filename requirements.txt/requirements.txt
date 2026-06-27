@@ -1,0 +1,9 @@
+faiss-cpu
+numpy
+pickle5
+sentence-transformers
+transformers
+torch
+pillow
+streamlit
+groq
