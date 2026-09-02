@@ -8,5 +8,6 @@ __pycache__/
 *.pkl
 .DS_Store
 .claude/
+*.log
 backend/price_cache.json
 backend/shopassist.db
