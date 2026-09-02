@@ -10,12 +10,10 @@ BACKEND_DOWN_MESSAGE = (
 )
 
 
-def call_chat_api(query):
-    """POST query to the /chat endpoint. Returns (result, error_message)."""
+def _post(endpoint, **kwargs):
+    """POST to the API and return (json_result, error_message)."""
     try:
-        response = requests.post(
-            f"{API_BASE_URL}/chat", json={"query": query}, timeout=60
-        )
+        response = requests.post(f"{API_BASE_URL}{endpoint}", timeout=60, **kwargs)
         response.raise_for_status()
         return response.json(), None
     except requests.exceptions.ConnectionError:
@@ -27,18 +25,40 @@ def call_chat_api(query):
         return None, f"Backend error: {e}"
 
 
-def render_answer(query):
-    with st.spinner("🔍 Searching products..."):
-        result, error = call_chat_api(query)
+def call_chat_api(query):
+    return _post("/chat", json={"query": query})
 
-    if error:
-        st.error(error)
-        return
 
+def call_chat_image_api(uploaded_file):
+    files = {"file": (uploaded_file.name, uploaded_file.getvalue(), uploaded_file.type)}
+    return _post("/chat/image", files=files)
+
+
+def render_result(result):
     st.header("💬 Answer")
+    if result.get("caption"):
+        st.caption(f"I see: {result['caption']}")
     st.write(result["answer"])
     if result.get("sources"):
         st.caption("Sources: " + ", ".join(result["sources"]))
+
+
+def render_answer(query):
+    with st.spinner("🔍 Searching products..."):
+        result, error = call_chat_api(query)
+    if error:
+        st.error(error)
+        return
+    render_result(result)
+
+
+def render_image_answer(uploaded_file):
+    with st.spinner("🖼️ Analyzing image..."):
+        result, error = call_chat_image_api(uploaded_file)
+    if error:
+        st.error(error)
+        return
+    render_result(result)
 
 
 # Page config
@@ -58,6 +78,7 @@ with st.sidebar:
     st.header("📦 About")
     st.write("This assistant uses:")
     st.write("- 🗄️ FAISS for product search")
+    st.write("- 🖼️ BLIP for image captioning")
     st.write("- 💬 Groq LLM for answers")
 
 # Main query section
@@ -72,6 +93,17 @@ if st.button("🔍 Search", type="primary"):
         render_answer(query)
     else:
         st.warning("Please enter a question!")
+
+# Image search section
+st.markdown("---")
+st.header("📷 Or Search by Image")
+uploaded_file = st.file_uploader("Upload a product photo", type=["jpg", "jpeg", "png"])
+
+if st.button("🖼️ Search by Image", type="primary"):
+    if uploaded_file is not None:
+        render_image_answer(uploaded_file)
+    else:
+        st.warning("Please upload an image first!")
 
 # Example queries
 st.markdown("---")
