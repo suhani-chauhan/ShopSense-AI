@@ -1,0 +1,1142 @@
+[
+  {
+    "id": 1,
+    "query": "black leather ankle boots",
+    "candidates": [
+      {
+        "id": 627,
+        "name": "Leather Ankle Boots",
+        "price": 1350.0,
+        "distance": 0.5442951917648315,
+        "relevant": null
+      },
+      {
+        "id": 1907,
+        "name": "Leather Ankle Boots",
+        "price": 1350.0,
+        "distance": 0.5442951917648315,
+        "relevant": null
+      },
+      {
+        "id": 782,
+        "name": "Check Panel Leather Ankle Boots",
+        "price": 990.0,
+        "distance": 0.5940709114074707,
+        "relevant": null
+      },
+      {
+        "id": 800,
+        "name": "Check Panel Leather Ankle Boots",
+        "price": 990.0,
+        "distance": 0.5940709114074707,
+        "relevant": null
+      },
+      {
+        "id": 2112,
+        "name": "House Check And Leather Ankle Boots",
+        "price": 950.0,
+        "distance": 0.6779807806015015,
+        "relevant": null
+      },
+      {
+        "id": 1339,
+        "name": "House Check And Leather Ankle Boots",
+        "price": 970.0,
+        "distance": 0.6880043148994446,
+        "relevant": null
+      },
+      {
+        "id": 1360,
+        "name": "Leather Boots",
+        "price": 1990.0,
+        "distance": 0.7510181665420532,
+        "relevant": null
+      },
+      {
+        "id": 106,
+        "name": "Suede Storm Ankle Boots",
+        "price": 1150.0,
+        "distance": 0.7521915435791016,
+        "relevant": null
+      },
+      {
+        "id": 329,
+        "name": "Suede Storm Ankle Boots",
+        "price": 1150.0,
+        "distance": 0.7521915435791016,
+        "relevant": null
+      },
+      {
+        "id": 999,
+        "name": "Suede Storm Ankle Boots",
+        "price": 1150.0,
+        "distance": 0.7521915435791016,
+        "relevant": null
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "query": "cashmere wool scarf",
+    "candidates": [
+      {
+        "id": 113,
+        "name": "Check Wool Cashmere Scarf",
+        "price": 550.0,
+        "distance": 0.3837125599384308,
+        "relevant": null
+      },
+      {
+        "id": 235,
+        "name": "Check Wool Cashmere Scarf",
+        "price": 550.0,
+        "distance": 0.3837125599384308,
+        "relevant": null
+      },
+      {
+        "id": 480,
+        "name": "Check Wool Cashmere Scarf",
+        "price": 550.0,
+        "distance": 0.3837125599384308,
+        "relevant": null
+      },
+      {
+        "id": 1765,
+        "name": "Check Wool Cashmere Scarf",
+        "price": 550.0,
+        "distance": 0.3837125599384308,
+        "relevant": null
+      },
+      {
+        "id": 2542,
+        "name": "Check Wool Cashmere Scarf",
+        "price": 550.0,
+        "distance": 0.3837125599384308,
+        "relevant": null
+      },
+      {
+        "id": 2720,
+        "name": "Check Wool Cashmere Scarf",
+        "price": 550.0,
+        "distance": 0.3837125599384308,
+        "relevant": null
+      },
+      {
+        "id": 507,
+        "name": "Check Wool Cashmere Hooded Scarf",
+        "price": 780.0,
+        "distance": 0.44285351037979126,
+        "relevant": null
+      },
+      {
+        "id": 640,
+        "name": "Check Silk Cashmere Scarf",
+        "price": 730.0,
+        "distance": 0.4625433683395386,
+        "relevant": null
+      },
+      {
+        "id": 2204,
+        "name": "Check Silk Cashmere Scarf",
+        "price": 730.0,
+        "distance": 0.4625433683395386,
+        "relevant": null
+      },
+      {
+        "id": 1654,
+        "name": "Montage Cashmere Reversible Scarf",
+        "price": 620.0,
+        "distance": 0.4891812205314636,
+        "relevant": null
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "query": "men's denim sneakers",
+    "candidates": [
+      {
+        "id": 559,
+        "name": "Denim Sneakers",
+        "price": 770.0,
+        "distance": 0.5591235160827637,
+        "relevant": null
+      },
+      {
+        "id": 3014,
+        "name": "Logo Print Denim Sneakers",
+        "price": 670.0,
+        "distance": 0.6758413910865784,
+        "relevant": null
+      },
+      {
+        "id": 2111,
+        "name": "Check Cotton Sneakers",
+        "price": 720.0,
+        "distance": 0.7672609090805054,
+        "relevant": null
+      },
+      {
+        "id": 865,
+        "name": "Check Cotton Sneakers",
+        "price": 870.0,
+        "distance": 0.7739810943603516,
+        "relevant": null
+      },
+      {
+        "id": 2105,
+        "name": "Check Cotton Sneakers",
+        "price": 650.0,
+        "distance": 0.7956666946411133,
+        "relevant": null
+      },
+      {
+        "id": 2236,
+        "name": "Check Cotton Sneakers",
+        "price": 650.0,
+        "distance": 0.7956666946411133,
+        "relevant": null
+      },
+      {
+        "id": 2581,
+        "name": "Check Cotton Sneakers",
+        "price": 620.0,
+        "distance": 0.7969217300415039,
+        "relevant": null
+      },
+      {
+        "id": 630,
+        "name": "Nylon  Leather And Cotton Sneakers",
+        "price": 690.0,
+        "distance": 0.8042527437210083,
+        "relevant": null
+      },
+      {
+        "id": 2418,
+        "name": "Nylon  Leather And Cotton Sneakers",
+        "price": 690.0,
+        "distance": 0.8042527437210083,
+        "relevant": null
+      },
+      {
+        "id": 558,
+        "name": "Check  Cotton And Leather Sneakers",
+        "price": 770.0,
+        "distance": 0.8082599639892578,
+        "relevant": null
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "query": "gold hoop earrings",
+    "candidates": [
+      {
+        "id": 834,
+        "name": "Gold-Plated Large Hollow Hoop Earrings",
+        "price": 970.0,
+        "distance": 0.4301527440547943,
+        "relevant": null
+      },
+      {
+        "id": 72,
+        "name": "Gold-Plated Small Hollow Hoop Earrings",
+        "price": 550.0,
+        "distance": 0.4354458451271057,
+        "relevant": null
+      },
+      {
+        "id": 1802,
+        "name": "Gold-Plated Horse Hoop Earrings",
+        "price": 680.0,
+        "distance": 0.48080527782440186,
+        "relevant": null
+      },
+      {
+        "id": 385,
+        "name": "Silver Small Hollow Hoop Earrings",
+        "price": 550.0,
+        "distance": 0.5043526887893677,
+        "relevant": null
+      },
+      {
+        "id": 1832,
+        "name": "Gold-Plated Hollow Spike Earrings",
+        "price": 550.0,
+        "distance": 0.6428807377815247,
+        "relevant": null
+      },
+      {
+        "id": 104,
+        "name": "Gold-Plated Hollow Stud Earrings",
+        "price": 410.0,
+        "distance": 0.6499356627464294,
+        "relevant": null
+      },
+      {
+        "id": 1684,
+        "name": "Silver Hollow Spike Earrings",
+        "price": 550.0,
+        "distance": 0.699586033821106,
+        "relevant": null
+      },
+      {
+        "id": 73,
+        "name": "Silver Hollow Stud Earrings",
+        "price": 410.0,
+        "distance": 0.712372899055481,
+        "relevant": null
+      },
+      {
+        "id": 1837,
+        "name": "Gold-Plated Spear Stud Earrings",
+        "price": 680.0,
+        "distance": 0.7320152521133423,
+        "relevant": null
+      },
+      {
+        "id": 185,
+        "name": "Gold-Plated Rose Stud Earrings",
+        "price": 410.0,
+        "distance": 0.7481332421302795,
+        "relevant": null
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "query": "gift for my mom",
+    "candidates": [
+      {
+        "id": 1103,
+        "name": "Logo Detail Palladium-Plated Necklace",
+        "price": 670.0,
+        "distance": 1.2090239524841309,
+        "relevant": null
+      },
+      {
+        "id": 1065,
+        "name": "Logo Detail Palladium-Plated Chain-Link Bracelet",
+        "price": 580.0,
+        "distance": 1.2185606956481934,
+        "relevant": null
+      },
+      {
+        "id": 1054,
+        "name": "Quilted Barn Jacket",
+        "price": 1650.0,
+        "distance": 1.2607089281082153,
+        "relevant": null
+      },
+      {
+        "id": 2986,
+        "name": "Check Engraved Palladium-Plated Signet Ring",
+        "price": 410.0,
+        "distance": 1.2668497562408447,
+        "relevant": null
+      },
+      {
+        "id": 2050,
+        "name": "Check Engraved Palladium-Plated Cuff",
+        "price": 430.0,
+        "distance": 1.2679088115692139,
+        "relevant": null
+      },
+      {
+        "id": 1910,
+        "name": "Burberry Gift Card",
+        "price": 50.0,
+        "distance": 1.2760038375854492,
+        "relevant": null
+      },
+      {
+        "id": 340,
+        "name": "Monogram Three-Piece Baby Gift Set",
+        "price": 440.0,
+        "distance": 1.280185341835022,
+        "relevant": null
+      },
+      {
+        "id": 1031,
+        "name": "Burberry Gift Card",
+        "price": 100.0,
+        "distance": 1.2815589904785156,
+        "relevant": null
+      },
+      {
+        "id": 341,
+        "name": "Monogram Two-Piece Baby Gift Set",
+        "price": 620.0,
+        "distance": 1.2829097509384155,
+        "relevant": null
+      },
+      {
+        "id": 767,
+        "name": "Fleece Two-Piece Baby Gift Set",
+        "price": 290.0,
+        "distance": 1.2864450216293335,
+        "relevant": null
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "query": "something stylish for winter",
+    "candidates": [
+      {
+        "id": 52,
+        "name": "Faux Fur And Nylon Trapper Hat",
+        "price": 1050.0,
+        "distance": 1.1493430137634277,
+        "relevant": null
+      },
+      {
+        "id": 2373,
+        "name": "Faux Fur And Nylon Trapper Hat",
+        "price": 1050.0,
+        "distance": 1.1493430137634277,
+        "relevant": null
+      },
+      {
+        "id": 1777,
+        "name": "Faux Fur And Nylon Trapper Hat",
+        "price": 1350.0,
+        "distance": 1.1557050943374634,
+        "relevant": null
+      },
+      {
+        "id": 1034,
+        "name": "Burberry Cashmere Concealer – Warm Honey No.08",
+        "price": 43.0,
+        "distance": 1.1595232486724854,
+        "relevant": null
+      },
+      {
+        "id": 2538,
+        "name": "Argyle Wool Sweater",
+        "price": 1790.0,
+        "distance": 1.161240577697754,
+        "relevant": null
+      },
+      {
+        "id": 147,
+        "name": "Argyle Wool Sweater",
+        "price": 1850.0,
+        "distance": 1.1689091920852661,
+        "relevant": null
+      },
+      {
+        "id": 2424,
+        "name": "Argyle Wool Sweater",
+        "price": 1790.0,
+        "distance": 1.1722509860992432,
+        "relevant": null
+      },
+      {
+        "id": 1025,
+        "name": "Faux Fur Hooded Scarf",
+        "price": 1050.0,
+        "distance": 1.175775170326233,
+        "relevant": null
+      },
+      {
+        "id": 1440,
+        "name": "Faux Fur Hooded Scarf",
+        "price": 1050.0,
+        "distance": 1.175775170326233,
+        "relevant": null
+      },
+      {
+        "id": 2594,
+        "name": "Faux Fur Hooded Scarf",
+        "price": 1050.0,
+        "distance": 1.175775170326233,
+        "relevant": null
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "query": "everyday accessory",
+    "candidates": [
+      {
+        "id": 2901,
+        "name": "Shield Pendant Earrings",
+        "price": 830.0,
+        "distance": 1.174389123916626,
+        "relevant": null
+      },
+      {
+        "id": 803,
+        "name": "Spear Cuff",
+        "price": 830.0,
+        "distance": 1.1948729753494263,
+        "relevant": null
+      },
+      {
+        "id": 2929,
+        "name": "Clock Silk Scarf",
+        "price": 490.0,
+        "distance": 1.2148783206939697,
+        "relevant": null
+      },
+      {
+        "id": 1004,
+        "name": "Shield Coin Pouch",
+        "price": 480.0,
+        "distance": 1.2154102325439453,
+        "relevant": null
+      },
+      {
+        "id": 1026,
+        "name": "Shield Coin Pouch",
+        "price": 480.0,
+        "distance": 1.2154102325439453,
+        "relevant": null
+      },
+      {
+        "id": 1344,
+        "name": "Shield Coin Pouch",
+        "price": 480.0,
+        "distance": 1.2154102325439453,
+        "relevant": null
+      },
+      {
+        "id": 1988,
+        "name": "Check Card Case With Detachable Chain Strap",
+        "price": 680.0,
+        "distance": 1.224840521812439,
+        "relevant": null
+      },
+      {
+        "id": 1801,
+        "name": "Gold-Plated Shield Pendant Necklace",
+        "price": 1150.0,
+        "distance": 1.2250406742095947,
+        "relevant": null
+      },
+      {
+        "id": 198,
+        "name": "Gold-Plated Spear Chain Bracelet",
+        "price": 1790.0,
+        "distance": 1.2279586791992188,
+        "relevant": null
+      },
+      {
+        "id": 1065,
+        "name": "Logo Detail Palladium-Plated Chain-Link Bracelet",
+        "price": 580.0,
+        "distance": 1.2284702062606812,
+        "relevant": null
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "query": "elegant outfit for a wedding",
+    "candidates": [
+      {
+        "id": 1887,
+        "name": "Sequinned Silk Jersey Dress",
+        "price": 5900.0,
+        "distance": 1.0279629230499268,
+        "relevant": null
+      },
+      {
+        "id": 2022,
+        "name": "Sequinned Silk Jersey Dress",
+        "price": 5900.0,
+        "distance": 1.0279629230499268,
+        "relevant": null
+      },
+      {
+        "id": 1524,
+        "name": "Check Dress With Bloomers",
+        "price": 290.0,
+        "distance": 1.0499646663665771,
+        "relevant": null
+      },
+      {
+        "id": 2667,
+        "name": "Check Cotton Dress With Bloomers",
+        "price": 270.0,
+        "distance": 1.0633870363235474,
+        "relevant": null
+      },
+      {
+        "id": 2809,
+        "name": "Check Cotton Dress With Bloomers",
+        "price": 270.0,
+        "distance": 1.0633870363235474,
+        "relevant": null
+      },
+      {
+        "id": 2906,
+        "name": "Feather Stretch Viscose Gown",
+        "price": 70000.0,
+        "distance": 1.0708601474761963,
+        "relevant": null
+      },
+      {
+        "id": 2139,
+        "name": "Draped Hem Viscose Blend Dress",
+        "price": 2190.0,
+        "distance": 1.0710501670837402,
+        "relevant": null
+      },
+      {
+        "id": 2701,
+        "name": "Cotton Gabardine Trench Gown",
+        "price": 28000.0,
+        "distance": 1.083426594734192,
+        "relevant": null
+      },
+      {
+        "id": 761,
+        "name": "Sleeveless Cashmere Cotton Blend Dress",
+        "price": 2090.0,
+        "distance": 1.084453821182251,
+        "relevant": null
+      },
+      {
+        "id": 3028,
+        "name": "Floral Print Viscose Slip Dress",
+        "price": 2090.0,
+        "distance": 1.0904104709625244,
+        "relevant": null
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "query": "winter coat under $500",
+    "candidates": [
+      {
+        "id": 1162,
+        "name": "Check Fleece Hooded Jacket",
+        "price": 2050.0,
+        "distance": 0.8059477806091309,
+        "relevant": null
+      },
+      {
+        "id": 863,
+        "name": "Reversible Hooded Jacket",
+        "price": 1650.0,
+        "distance": 0.8265142440795898,
+        "relevant": null
+      },
+      {
+        "id": 1736,
+        "name": "Check Fleece Jacket",
+        "price": 680.0,
+        "distance": 0.8361717462539673,
+        "relevant": null
+      },
+      {
+        "id": 1931,
+        "name": "Quilted Nylon Hooded Coat",
+        "price": 620.0,
+        "distance": 0.836670458316803,
+        "relevant": null
+      },
+      {
+        "id": 2576,
+        "name": "Wool Blend Duffle Coat",
+        "price": 2050.0,
+        "distance": 0.8417325615882874,
+        "relevant": null
+      },
+      {
+        "id": 3006,
+        "name": "Short Lightweight Trench Coat",
+        "price": 2590.0,
+        "distance": 0.8454251289367676,
+        "relevant": null
+      },
+      {
+        "id": 1239,
+        "name": "Wool Tailored Coat",
+        "price": 3550.0,
+        "distance": 0.8463441133499146,
+        "relevant": null
+      },
+      {
+        "id": 2552,
+        "name": "Wool Tailored Coat",
+        "price": 3550.0,
+        "distance": 0.8463441133499146,
+        "relevant": null
+      },
+      {
+        "id": 2536,
+        "name": "Check Wool Blend Coat",
+        "price": 6900.0,
+        "distance": 0.8473581075668335,
+        "relevant": null
+      },
+      {
+        "id": 324,
+        "name": "Shearling Hooded Coat",
+        "price": 12500.0,
+        "distance": 0.8482164144515991,
+        "relevant": null
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "query": "affordable wallet under $300",
+    "candidates": [
+      {
+        "id": 2827,
+        "name": "Check Small Folding Wallet",
+        "price": 560.0,
+        "distance": 0.8388010859489441,
+        "relevant": null
+      },
+      {
+        "id": 1893,
+        "name": "Check Large Bifold Wallet",
+        "price": 680.0,
+        "distance": 0.8636726140975952,
+        "relevant": null
+      },
+      {
+        "id": 2595,
+        "name": "Check Small Bifold Wallet",
+        "price": 560.0,
+        "distance": 0.8639879822731018,
+        "relevant": null
+      },
+      {
+        "id": 229,
+        "name": "Check Ziparound Wallet",
+        "price": 480.0,
+        "distance": 0.8675769567489624,
+        "relevant": null
+      },
+      {
+        "id": 1468,
+        "name": "Check Ziparound Wallet",
+        "price": 480.0,
+        "distance": 0.8675769567489624,
+        "relevant": null
+      },
+      {
+        "id": 302,
+        "name": "Check Bifold Wallet",
+        "price": 430.0,
+        "distance": 0.8707966804504395,
+        "relevant": null
+      },
+      {
+        "id": 617,
+        "name": "Check Bifold Wallet",
+        "price": 430.0,
+        "distance": 0.8707966804504395,
+        "relevant": null
+      },
+      {
+        "id": 1373,
+        "name": "Check Bifold Wallet",
+        "price": 430.0,
+        "distance": 0.8707966804504395,
+        "relevant": null
+      },
+      {
+        "id": 1422,
+        "name": "Check Bifold Wallet",
+        "price": 430.0,
+        "distance": 0.8707966804504395,
+        "relevant": null
+      },
+      {
+        "id": 2146,
+        "name": "Check Medium Bifold Wallet",
+        "price": 640.0,
+        "distance": 0.8777545690536499,
+        "relevant": null
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "query": "luxury handbag over $2000",
+    "candidates": [
+      {
+        "id": 489,
+        "name": "Check And Leather Backpack",
+        "price": 2050.0,
+        "distance": 0.8867177963256836,
+        "relevant": null
+      },
+      {
+        "id": 557,
+        "name": "Large Shield Zip Wallet",
+        "price": 910.0,
+        "distance": 0.9003919959068298,
+        "relevant": null
+      },
+      {
+        "id": 1345,
+        "name": "Large Shield Zip Wallet",
+        "price": 910.0,
+        "distance": 0.9003919959068298,
+        "relevant": null
+      },
+      {
+        "id": 1406,
+        "name": "Large Shield Zip Wallet",
+        "price": 910.0,
+        "distance": 0.9003919959068298,
+        "relevant": null
+      },
+      {
+        "id": 2902,
+        "name": "Small Shield Sling Bag",
+        "price": 2590.0,
+        "distance": 0.9049541354179382,
+        "relevant": null
+      },
+      {
+        "id": 34,
+        "name": "Top Handle Note Bag",
+        "price": 1790.0,
+        "distance": 0.9075459837913513,
+        "relevant": null
+      },
+      {
+        "id": 227,
+        "name": "Top Handle Note Bag",
+        "price": 1790.0,
+        "distance": 0.9075459837913513,
+        "relevant": null
+      },
+      {
+        "id": 808,
+        "name": "Top Handle Note Bag",
+        "price": 1790.0,
+        "distance": 0.9075459837913513,
+        "relevant": null
+      },
+      {
+        "id": 876,
+        "name": "Rose Clutch",
+        "price": 2790.0,
+        "distance": 0.9084780216217041,
+        "relevant": null
+      },
+      {
+        "id": 877,
+        "name": "Rose Clutch",
+        "price": 2790.0,
+        "distance": 0.9084780216217041,
+        "relevant": null
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "query": "budget-friendly sunglasses under $200",
+    "candidates": [
+      {
+        "id": 1702,
+        "name": "Pilot Sunglasses",
+        "price": 280.0,
+        "distance": 0.5246862173080444,
+        "relevant": null
+      },
+      {
+        "id": 401,
+        "name": "Vintage Check Detail Square Frame Sunglasses",
+        "price": 250.0,
+        "distance": 0.5586163997650146,
+        "relevant": null
+      },
+      {
+        "id": 469,
+        "name": "Pilot Sunglasses",
+        "price": 470.0,
+        "distance": 0.5678179264068604,
+        "relevant": null
+      },
+      {
+        "id": 1956,
+        "name": "Pilot Sunglasses",
+        "price": 470.0,
+        "distance": 0.5678179264068604,
+        "relevant": null
+      },
+      {
+        "id": 2029,
+        "name": "Pilot Sunglasses",
+        "price": 470.0,
+        "distance": 0.5678179264068604,
+        "relevant": null
+      },
+      {
+        "id": 2034,
+        "name": "Pilot Sunglasses",
+        "price": 470.0,
+        "distance": 0.5678179264068604,
+        "relevant": null
+      },
+      {
+        "id": 2739,
+        "name": "Pilot Sunglasses",
+        "price": 470.0,
+        "distance": 0.5678179264068604,
+        "relevant": null
+      },
+      {
+        "id": 1268,
+        "name": "Logo Detail Square Frame Sunglasses",
+        "price": 250.0,
+        "distance": 0.5752309560775757,
+        "relevant": null
+      },
+      {
+        "id": 534,
+        "name": "Logo Detail Square Frame Foldable Sunglasses",
+        "price": 280.0,
+        "distance": 0.5792750716209412,
+        "relevant": null
+      },
+      {
+        "id": 1135,
+        "name": "Check Rectangular Frame Sunglasses",
+        "price": 280.0,
+        "distance": 0.5968139171600342,
+        "relevant": null
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "query": "women's knitwear",
+    "candidates": [
+      {
+        "id": 2538,
+        "name": "Argyle Wool Sweater",
+        "price": 1790.0,
+        "distance": 0.724393367767334,
+        "relevant": null
+      },
+      {
+        "id": 2377,
+        "name": "Wool Sweater",
+        "price": 1250.0,
+        "distance": 0.7669520378112793,
+        "relevant": null
+      },
+      {
+        "id": 2424,
+        "name": "Argyle Wool Sweater",
+        "price": 1790.0,
+        "distance": 0.7762030959129333,
+        "relevant": null
+      },
+      {
+        "id": 318,
+        "name": "Rose Wool Sweater",
+        "price": 1950.0,
+        "distance": 0.7830088138580322,
+        "relevant": null
+      },
+      {
+        "id": 147,
+        "name": "Argyle Wool Sweater",
+        "price": 1850.0,
+        "distance": 0.7845012545585632,
+        "relevant": null
+      },
+      {
+        "id": 2,
+        "name": "Check Wool Blend Cardigan",
+        "price": 1290.0,
+        "distance": 0.7910467982292175,
+        "relevant": null
+      },
+      {
+        "id": 1670,
+        "name": "Check Alpaca Wool Blend Sweater",
+        "price": 1750.0,
+        "distance": 0.7965449690818787,
+        "relevant": null
+      },
+      {
+        "id": 1113,
+        "name": "Wool Sweater",
+        "price": 1090.0,
+        "distance": 0.8023972511291504,
+        "relevant": null
+      },
+      {
+        "id": 2365,
+        "name": "Wool Sweater",
+        "price": 1090.0,
+        "distance": 0.8023972511291504,
+        "relevant": null
+      },
+      {
+        "id": 47,
+        "name": "Wool Sweater",
+        "price": 1150.0,
+        "distance": 0.8050651550292969,
+        "relevant": null
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "query": "men's hats and gloves",
+    "candidates": [
+      {
+        "id": 2849,
+        "name": "Check Cotton Blend Baseball Cap",
+        "price": 440.0,
+        "distance": 0.8505487442016602,
+        "relevant": null
+      },
+      {
+        "id": 2316,
+        "name": "Exaggerated Check Wool And Leather Gloves",
+        "price": 530.0,
+        "distance": 0.8765898942947388,
+        "relevant": null
+      },
+      {
+        "id": 51,
+        "name": "Check Cotton Baseball Cap",
+        "price": 440.0,
+        "distance": 0.8780330419540405,
+        "relevant": null
+      },
+      {
+        "id": 221,
+        "name": "Check Cotton Baseball Cap",
+        "price": 440.0,
+        "distance": 0.8780330419540405,
+        "relevant": null
+      },
+      {
+        "id": 504,
+        "name": "Check Cotton Baseball Cap",
+        "price": 440.0,
+        "distance": 0.8780330419540405,
+        "relevant": null
+      },
+      {
+        "id": 1233,
+        "name": "Check Cotton Baseball Cap",
+        "price": 440.0,
+        "distance": 0.8780330419540405,
+        "relevant": null
+      },
+      {
+        "id": 2345,
+        "name": "Check Cotton Baseball Cap",
+        "price": 440.0,
+        "distance": 0.8780330419540405,
+        "relevant": null
+      },
+      {
+        "id": 2775,
+        "name": "Check Cotton Baseball Cap",
+        "price": 440.0,
+        "distance": 0.8780330419540405,
+        "relevant": null
+      },
+      {
+        "id": 656,
+        "name": "Check And Mesh Cap",
+        "price": 410.0,
+        "distance": 0.8997337818145752,
+        "relevant": null
+      },
+      {
+        "id": 1083,
+        "name": "Check Cotton Bucket Hat",
+        "price": 480.0,
+        "distance": 0.9065080285072327,
+        "relevant": null
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "query": "kids shoes",
+    "candidates": [
+      {
+        "id": 1172,
+        "name": "Check Cotton Sneakers",
+        "price": 370.0,
+        "distance": 0.8365809917449951,
+        "relevant": null
+      },
+      {
+        "id": 2871,
+        "name": "Check Cotton Sneakers",
+        "price": 370.0,
+        "distance": 0.8365809917449951,
+        "relevant": null
+      },
+      {
+        "id": 140,
+        "name": "Check Cotton Sneakers",
+        "price": 410.0,
+        "distance": 0.8430689573287964,
+        "relevant": null
+      },
+      {
+        "id": 760,
+        "name": "Check Cotton Sneakers",
+        "price": 400.0,
+        "distance": 0.8488537669181824,
+        "relevant": null
+      },
+      {
+        "id": 847,
+        "name": "Check Cotton High-Top Sneakers",
+        "price": 420.0,
+        "distance": 0.8546705842018127,
+        "relevant": null
+      },
+      {
+        "id": 1627,
+        "name": "Check Cotton High-Top Sneakers",
+        "price": 420.0,
+        "distance": 0.8546705842018127,
+        "relevant": null
+      },
+      {
+        "id": 2374,
+        "name": "Check Cotton High-Top Sneakers",
+        "price": 420.0,
+        "distance": 0.8546705842018127,
+        "relevant": null
+      },
+      {
+        "id": 127,
+        "name": "Check Cotton Blend Booties",
+        "price": 230.0,
+        "distance": 0.8576747179031372,
+        "relevant": null
+      },
+      {
+        "id": 1250,
+        "name": "Check Cotton High-Top Sneakers",
+        "price": 400.0,
+        "distance": 0.8683531880378723,
+        "relevant": null
+      },
+      {
+        "id": 2502,
+        "name": "Monogram Motif Rubber Sandals",
+        "price": 300.0,
+        "distance": 0.9715220928192139,
+        "relevant": null
+      }
+    ]
+  }
+]
