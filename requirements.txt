@@ -1,8 +1,10 @@
 faiss-cpu
 numpy
+pandas
 sentence-transformers
 transformers
 torch
 pillow
 streamlit
 groq
+python-dotenv

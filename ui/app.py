@@ -1,56 +1,15 @@
-import streamlit as st
-import sys
 import os
-import tempfile
-import faiss
-import numpy as np
-import pickle
-from sentence_transformers import SentenceTransformer
-from groq import Groq
+import sys
 
-# Add backend to path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+import streamlit as st
 
-# Load only these at startup (NO BLIP here)
-embedder = SentenceTransformer("all-MiniLM-L6-v2")
-groq_client = Groq(api_key="your_groq_api_key_here")
+# Ensure the repo root is on sys.path so `backend` can be imported as a
+# package regardless of the working directory `streamlit run` is invoked from.
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _REPO_ROOT not in sys.path:
+    sys.path.insert(0, _REPO_ROOT)
 
-# Load FAISS
-index = faiss.read_index("backend/product_index.faiss")
-with open("backend/product_metadata.pkl", "rb") as f:
-    metadata = pickle.load(f)
-
-def search_products(query, top_k=3):
-    query_embedding = embedder.encode([query])
-    query_embedding = np.array(query_embedding, dtype="float32")
-    distances, indices = index.search(query_embedding, top_k)
-    results = []
-    for i, idx in enumerate(indices[0]):
-        if idx != -1:
-            results.append(metadata[idx])
-    return results
-
-def answer_query(user_query):
-    relevant_products = search_products(user_query, top_k=3)
-    context = ""
-    for p in relevant_products:
-        context += f"Product: {p['name']}\n"
-        context += f"Description: {p['description']}\n\n"
-    
-    response = groq_client.chat.completions.create(
-        model="llama-3.1-8b-instant",
-        messages=[
-            {
-                "role": "system",
-                "content": "You are a helpful shopping assistant. Use the product information provided to answer the user's question. Be friendly and helpful."
-            },
-            {
-                "role": "user",
-                "content": f"Based on these products:\n\n{context}\n\nAnswer this question: {user_query}"
-            }
-        ]
-    )
-    return response.choices[0].message.content
+from backend.rag_pipeline import answer_query
 
 # Page config
 st.set_page_config(
@@ -75,7 +34,7 @@ with st.sidebar:
 st.header("❓ Ask a Question")
 query = st.text_input(
     "What are you looking for?",
-    placeholder="e.g. Show me red sneakers"
+    placeholder="e.g. warm gloves for men under $600"
 )
 
 if st.button("🔍 Search", type="primary"):
@@ -92,10 +51,10 @@ st.markdown("---")
 st.header("💡 Try These Examples")
 
 example_queries = [
-    "Show me red sneakers",
-    "I need a laptop for coding",
-    "What phones do you have?",
-    "Show me products under $500"
+    "warm gloves for men under $600",
+    "elegant wool cardigan for women",
+    "affordable accessories",
+    "leather handbag under $1000"
 ]
 
 cols = st.columns(4)
