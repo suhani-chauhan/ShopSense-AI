@@ -81,6 +81,60 @@ Answer this question: {user_query}"""
     }
 
 
+def _format_listing(data):
+    rating = f"{data.get('rating')}★" if data.get("rating") is not None else "no rating"
+    reviews = f"{data.get('reviews')} reviews" if data.get("reviews") is not None else "no review count"
+    return f"{data.get('title')} — {data.get('price')}, {rating}, {reviews}"
+
+
+def answer_comparison_query(product, comparison):
+    """Ask the LLM to comment on live Amazon/Flipkart data for a product.
+
+    `product` is a metadata dict from search_products(); `comparison` is the
+    {"amazon": {...} or None, "flipkart": {...} or None} dict returned by
+    price_compare.get_price_comparison().
+    """
+    amazon = comparison.get("amazon")
+    flipkart = comparison.get("flipkart")
+
+    lines = [
+        f"Product: {product['name']}",
+        f"Brand: {product.get('brand', 'N/A')}",
+        f"Our catalog price: ${product.get('price', 'N/A')}",
+        "",
+    ]
+
+    if amazon or flipkart:
+        lines.append("Live marketplace data:")
+        lines.append(f"- Amazon: {_format_listing(amazon) if amazon else 'no result found'}")
+        lines.append(f"- Flipkart: {_format_listing(flipkart) if flipkart else 'no result found'}")
+    else:
+        lines.append("No live Amazon or Flipkart data is currently available for this product.")
+
+    context = "\n".join(lines)
+
+    response = groq_client.chat.completions.create(
+        model="openai/gpt-oss-20b",
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "You are a helpful shopping assistant comparing prices across "
+                    "marketplaces. Comment conversationally on price and review "
+                    "differences between platforms, in a style like: 'Found on Amazon "
+                    "for ₹1,299 (4.2★, 340 reviews) and Flipkart for ₹999 (3.8★, "
+                    "45 reviews). Amazon is pricier but significantly better "
+                    "reviewed.' If no live data is available, say so plainly instead "
+                    "of making up numbers."
+                ),
+            },
+            {"role": "user", "content": context},
+        ],
+    )
+
+    return response.choices[0].message.content
+
+
 if __name__ == "__main__":
     # Test queries against the real fashion catalog
     queries = [

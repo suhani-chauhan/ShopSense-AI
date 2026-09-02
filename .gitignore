@@ -8,3 +8,4 @@ __pycache__/
 *.pkl
 .DS_Store
 .claude/
+backend/price_cache.json

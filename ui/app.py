@@ -34,6 +34,10 @@ def call_chat_image_api(uploaded_file):
     return _post("/chat/image", files=files)
 
 
+def call_compare_api(query):
+    return _post("/chat/compare", json={"query": query})
+
+
 def render_result(result):
     st.header("💬 Answer")
     if result.get("caption"):
@@ -43,22 +47,61 @@ def render_result(result):
         st.caption("Sources: " + ", ".join(result["sources"]))
 
 
-def render_answer(query):
+def render_comparison(result):
+    st.subheader("💰 Price Comparison")
+
+    comparison = result.get("comparison", {})
+    col_amazon, col_flipkart = st.columns(2)
+    for col, platform, label in (
+        (col_amazon, "amazon", "🅰️ Amazon"),
+        (col_flipkart, "flipkart", "🅵 Flipkart"),
+    ):
+        data = comparison.get(platform)
+        with col:
+            st.markdown(f"**{label}**")
+            if data:
+                st.write(data.get("title") or "—")
+                st.write(f"💵 {data.get('price', 'N/A')}")
+                rating = f"{data['rating']}★" if data.get("rating") is not None else "No rating"
+                reviews = f"({data['reviews']} reviews)" if data.get("reviews") is not None else ""
+                st.write(f"⭐ {rating} {reviews}".strip())
+                if data.get("url"):
+                    st.markdown(f"[View listing]({data['url']})")
+            else:
+                st.write("No result found")
+
+    st.write(result.get("answer", ""))
+
+
+def run_search(query):
     with st.spinner("🔍 Searching products..."):
         result, error = call_chat_api(query)
-    if error:
-        st.error(error)
-        return
-    render_result(result)
+    st.session_state.last_query = query
+    st.session_state.last_result = result
+    st.session_state.last_error = error
+    st.session_state.comparison_result = None
+    st.session_state.comparison_error = None
 
 
-def render_image_answer(uploaded_file):
+def run_image_search(uploaded_file):
     with st.spinner("🖼️ Analyzing image..."):
         result, error = call_chat_image_api(uploaded_file)
-    if error:
-        st.error(error)
-        return
-    render_result(result)
+    st.session_state.last_query = result.get("caption") if result else None
+    st.session_state.last_result = result
+    st.session_state.last_error = error
+    st.session_state.comparison_result = None
+    st.session_state.comparison_error = None
+
+
+def run_price_comparison():
+    with st.spinner("💰 Comparing prices..."):
+        result, error = call_compare_api(st.session_state.last_query)
+    st.session_state.comparison_result = result
+    st.session_state.comparison_error = error
+
+
+for key in ("last_query", "last_result", "last_error", "comparison_result", "comparison_error"):
+    st.session_state.setdefault(key, None)
 
 
 # Page config
@@ -80,6 +123,7 @@ with st.sidebar:
     st.write("- 🗄️ FAISS for product search")
     st.write("- 🖼️ BLIP for image captioning")
     st.write("- 💬 Groq LLM for answers")
+    st.write("- 💰 SerpAPI for live price comparison")
 
 # Main query section
 st.header("❓ Ask a Question")
@@ -90,7 +134,7 @@ query = st.text_input(
 
 if st.button("🔍 Search", type="primary"):
     if query:
-        render_answer(query)
+        run_search(query)
     else:
         st.warning("Please enter a question!")
 
@@ -101,9 +145,23 @@ uploaded_file = st.file_uploader("Upload a product photo", type=["jpg", "jpeg", 
 
 if st.button("🖼️ Search by Image", type="primary"):
     if uploaded_file is not None:
-        render_image_answer(uploaded_file)
+        run_image_search(uploaded_file)
     else:
         st.warning("Please upload an image first!")
+
+# Result + price comparison (persisted across reruns via session_state)
+if st.session_state.last_error:
+    st.error(st.session_state.last_error)
+elif st.session_state.last_result:
+    render_result(st.session_state.last_result)
+
+    if st.button("🔍 Compare prices"):
+        run_price_comparison()
+
+    if st.session_state.comparison_error:
+        st.error(st.session_state.comparison_error)
+    elif st.session_state.comparison_result:
+        render_comparison(st.session_state.comparison_result)
 
 # Example queries
 st.markdown("---")
@@ -120,4 +178,4 @@ cols = st.columns(4)
 for i, example in enumerate(example_queries):
     with cols[i]:
         if st.button(example):
-            render_answer(example)
+            run_search(example)
