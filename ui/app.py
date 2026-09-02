@@ -1,4 +1,6 @@
+import html
 import os
+import textwrap
 
 import requests
 import streamlit as st
@@ -47,28 +49,127 @@ def render_result(result):
         st.caption("Sources: " + ", ".join(result["sources"]))
 
 
+def _shopping_card_html(listing):
+    title = html.escape(listing.get("title") or "")
+    store = html.escape(listing.get("store") or "Unknown store")
+    price = html.escape(str(listing.get("price") or "N/A"))
+    image_url = html.escape(listing.get("image_url") or "")
+    url = html.escape(listing.get("url") or "#")
+
+    old_price = listing.get("old_price")
+    old_price_html = (
+        f'<span class="sc-old-price">{html.escape(str(old_price))}</span>' if old_price else ""
+    )
+
+    delivery = listing.get("delivery")
+    delivery_html = f'<div class="sc-delivery">{html.escape(delivery)}</div>' if delivery else ""
+
+    image_html = f'<img class="sc-image" src="{image_url}" alt="{title}" />' if image_url else ""
+
+    # Built as a single line, with no embedded newlines — a blank-looking
+    # line here (e.g. from an empty image_html/delivery_html slot) would be
+    # read by Streamlit's markdown parser as ending the raw-HTML block and
+    # mangle everything that follows.
+    return (
+        f'<a class="sc-card" href="{url}" target="_blank" rel="noopener noreferrer">'
+        f"{image_html}"
+        f'<div class="sc-title">{title}</div>'
+        f'<div class="sc-price-row"><span class="sc-price">{price}</span>{old_price_html}</div>'
+        f'<div class="sc-store">{store}</div>'
+        f"{delivery_html}"
+        f"</a>"
+    )
+
+
 def render_comparison(result):
     st.subheader("💰 Price Comparison")
 
-    comparison = result.get("comparison", {})
-    col_amazon, col_flipkart = st.columns(2)
-    for col, platform, label in (
-        (col_amazon, "amazon", "🅰️ Amazon"),
-        (col_flipkart, "flipkart", "🅵 Flipkart"),
-    ):
-        data = comparison.get(platform)
-        with col:
-            st.markdown(f"**{label}**")
-            if data:
-                st.write(data.get("title") or "—")
-                st.write(f"💵 {data.get('price', 'N/A')}")
-                rating = f"{data['rating']}★" if data.get("rating") is not None else "No rating"
-                reviews = f"({data['reviews']} reviews)" if data.get("reviews") is not None else ""
-                st.write(f"⭐ {rating} {reviews}".strip())
-                if data.get("url"):
-                    st.markdown(f"[View listing]({data['url']})")
-            else:
-                st.write("No result found")
+    listings = result.get("listings") or []
+    if not listings:
+        st.write(result.get("answer", ""))
+        return
+
+    cards = "".join(_shopping_card_html(listing) for listing in listings)
+
+    carousel_html = textwrap.dedent(
+        f"""
+        <style>
+        .sc-carousel {{
+            display: flex;
+            overflow-x: auto;
+            gap: 12px;
+            padding: 4px 4px 16px 4px;
+        }}
+        .sc-card {{
+            flex: 0 0 200px;
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            background: var(--secondary-background-color);
+            border: 1px solid rgba(128, 128, 128, 0.25);
+            border-radius: 10px;
+            padding: 10px;
+            text-decoration: none !important;
+            color: inherit !important;
+            transition: border-color 0.15s ease;
+        }}
+        .sc-card:hover {{
+            border-color: rgba(128, 128, 128, 0.6);
+        }}
+        .sc-image {{
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            background: rgba(128, 128, 128, 0.08);
+        }}
+        .sc-title {{
+            font-size: 0.85rem;
+            line-height: 1.3em;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 2.6em;
+            margin-bottom: 6px;
+            color: var(--text-color) !important;
+            text-decoration: none !important;
+        }}
+        .sc-price-row {{
+            margin-bottom: 4px;
+        }}
+        .sc-price {{
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text-color) !important;
+        }}
+        .sc-old-price {{
+            text-decoration: line-through !important;
+            opacity: 0.6;
+            font-size: 0.78rem;
+            margin-left: 6px;
+            color: var(--text-color) !important;
+        }}
+        .sc-store {{
+            font-size: 0.75rem;
+            opacity: 0.65;
+            color: var(--text-color) !important;
+            text-decoration: none !important;
+        }}
+        .sc-delivery {{
+            font-size: 0.72rem;
+            opacity: 0.55;
+            margin-top: 2px;
+            color: var(--text-color) !important;
+            text-decoration: none !important;
+        }}
+        </style>
+        <div class="sc-carousel">{cards}</div>
+        """
+    ).strip()
+
+    st.markdown(carousel_html, unsafe_allow_html=True)
 
     st.write(result.get("answer", ""))
 

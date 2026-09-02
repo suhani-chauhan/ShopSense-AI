@@ -20,15 +20,6 @@ _BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
 CACHE_PATH = os.path.join(_BACKEND_DIR, "price_cache.json")
 CACHE_TTL_SECONDS = 24 * 60 * 60  # 1 day
 
-# Google Shopping's structured index doesn't honor "site:" query operators
-# (those only apply to organic web search), so a single India-locale query
-# is issued and platform listings are picked out of the results by seller
-# name — this also halves SerpAPI usage per product vs. two filtered queries.
-PLATFORM_SOURCE_MATCH = {
-    "amazon": "amazon",
-    "flipkart": "flipkart",
-}
-
 
 def _load_cache():
     if not os.path.exists(CACHE_PATH):
@@ -51,11 +42,15 @@ def _save_cache(cache):
 
 def _extract_listing(item):
     return {
+        "store": item.get("source"),
         "title": item.get("title"),
         "price": item.get("price"),
+        "old_price": item.get("old_price"),
         "rating": item.get("rating"),
-        "reviews": item.get("reviews"),
+        "review_count": item.get("reviews"),
         "url": item.get("product_link") or item.get("link"),
+        "image_url": item.get("thumbnail"),
+        "delivery": item.get("delivery"),
     }
 
 
@@ -71,7 +66,7 @@ def _fetch_shopping_results(product_name):
     params = {
         "engine": "google_shopping",
         "q": product_name,
-        "gl": "in",  # India locale surfaces Amazon.in and Flipkart listings
+        "gl": "in",  # India locale surfaces a broad mix of Indian sellers
         "hl": "en",
         "api_key": api_key,
     }
@@ -91,29 +86,51 @@ def _fetch_shopping_results(product_name):
     return data.get("shopping_results") or []
 
 
-def get_price_comparison(product_name: str) -> dict:
-    """Look up the top Amazon.in and Flipkart listings for a product via SerpAPI.
-
-    Never raises — network/quota/missing-key failures are logged and result
-    in None for the affected platform(s) so the caller can degrade gracefully.
+def _get_raw_shopping_results(product_name):
+    """Cached raw SerpAPI shopping_results for a product — the full response,
+    not a deduplicated/truncated view, so changing num_results later doesn't
+    require a fresh API call. A cache entry from the old {"amazon":...,
+    "flipkart":...} shape is treated as a miss and gets overwritten.
     """
     cache = _load_cache()
     cached = cache.get(product_name)
-    if cached and (time.time() - cached.get("timestamp", 0)) < CACHE_TTL_SECONDS:
+    if (
+        cached
+        and "shopping_results" in cached
+        and (time.time() - cached.get("timestamp", 0)) < CACHE_TTL_SECONDS
+    ):
         logger.info("Price cache HIT for %r — skipping SerpAPI request.", product_name)
-        return cached["result"]
+        return cached["shopping_results"]
 
     logger.info("Price cache MISS for %r — querying SerpAPI live.", product_name)
     shopping_results = _fetch_shopping_results(product_name)
 
-    result = {"amazon": None, "flipkart": None}
-    for platform, needle in PLATFORM_SOURCE_MATCH.items():
-        for item in shopping_results:
-            if needle in (item.get("source") or "").lower():
-                result[platform] = _extract_listing(item)
-                break
-
-    cache[product_name] = {"timestamp": time.time(), "result": result}
+    cache[product_name] = {"timestamp": time.time(), "shopping_results": shopping_results}
     _save_cache(cache)
 
-    return result
+    return shopping_results
+
+
+def get_shopping_comparison(product_name: str, num_results: int = 5) -> list:
+    """Return up to num_results shopping listings for a product, one per
+    distinct store, in SerpAPI's original ranking order — a general shopping
+    grid rather than a fixed Amazon/Flipkart lookup.
+
+    Never raises — a missing key, network failure, or empty results all
+    result in an empty list (logged), same graceful-degradation contract
+    as before.
+    """
+    shopping_results = _get_raw_shopping_results(product_name)
+
+    listings = []
+    seen_stores = set()
+    for item in shopping_results:
+        store = item.get("source")
+        if not store or store in seen_stores:
+            continue
+        seen_stores.add(store)
+        listings.append(_extract_listing(item))
+        if len(listings) >= num_results:
+            break
+
+    return listings

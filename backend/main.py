@@ -13,7 +13,7 @@ async def lifespan(app: FastAPI):
     # Import (and thereby load the FAISS index, metadata, embedding model,
     # and BLIP captioning model) once at startup rather than per-request.
     from backend.image_to_text import describe_image
-    from backend.price_compare import get_price_comparison
+    from backend.price_compare import get_shopping_comparison
     from backend.rag_pipeline import (
         answer_comparison_query,
         answer_query,
@@ -25,7 +25,7 @@ async def lifespan(app: FastAPI):
     app.state.answer_query = answer_query
     app.state.answer_comparison_query = answer_comparison_query
     app.state.describe_image = describe_image
-    app.state.get_price_comparison = get_price_comparison
+    app.state.get_shopping_comparison = get_shopping_comparison
     app.state.products_loaded = len(metadata)
 
     yield
@@ -100,14 +100,14 @@ def chat_compare(body: CompareRequest, request: Request):
         raise HTTPException(status_code=404, detail="No matching product found.")
 
     top_product = results[0]
-    comparison = request.app.state.get_price_comparison(top_product["name"])
+    listings = request.app.state.get_shopping_comparison(top_product["name"])
 
     try:
-        answer = request.app.state.answer_comparison_query(top_product, comparison)
+        answer = request.app.state.answer_comparison_query(top_product, listings)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Groq request failed: {e}") from e
 
-    return {"product": top_product["name"], "comparison": comparison, "answer": answer}
+    return {"product": top_product, "listings": listings, "answer": answer}
 
 
 @app.post("/search/image")

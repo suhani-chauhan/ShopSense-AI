@@ -81,22 +81,23 @@ Answer this question: {user_query}"""
     }
 
 
-def _format_listing(data):
-    rating = f"{data.get('rating')}★" if data.get("rating") is not None else "no rating"
-    reviews = f"{data.get('reviews')} reviews" if data.get("reviews") is not None else "no review count"
-    return f"{data.get('title')} — {data.get('price')}, {rating}, {reviews}"
+def _format_listing(listing):
+    rating = f"{listing.get('rating')}★" if listing.get("rating") is not None else "no rating"
+    reviews = (
+        f"{listing['review_count']} reviews"
+        if listing.get("review_count") is not None
+        else "no review count"
+    )
+    store = listing.get("store") or "Unknown store"
+    return f"{store}: {listing.get('title')} — {listing.get('price')}, {rating}, {reviews}"
 
 
-def answer_comparison_query(product, comparison):
-    """Ask the LLM to comment on live Amazon/Flipkart data for a product.
+def answer_comparison_query(product, listings):
+    """Ask the LLM to summarize live shopping listings for a product.
 
-    `product` is a metadata dict from search_products(); `comparison` is the
-    {"amazon": {...} or None, "flipkart": {...} or None} dict returned by
-    price_compare.get_price_comparison().
+    `product` is a metadata dict from search_products(); `listings` is the
+    list of 0..N dicts returned by price_compare.get_shopping_comparison().
     """
-    amazon = comparison.get("amazon")
-    flipkart = comparison.get("flipkart")
-
     lines = [
         f"Product: {product['name']}",
         f"Brand: {product.get('brand', 'N/A')}",
@@ -104,12 +105,12 @@ def answer_comparison_query(product, comparison):
         "",
     ]
 
-    if amazon or flipkart:
-        lines.append("Live marketplace data:")
-        lines.append(f"- Amazon: {_format_listing(amazon) if amazon else 'no result found'}")
-        lines.append(f"- Flipkart: {_format_listing(flipkart) if flipkart else 'no result found'}")
+    if listings:
+        lines.append("Live marketplace listings:")
+        for listing in listings:
+            lines.append(f"- {_format_listing(listing)}")
     else:
-        lines.append("No live Amazon or Flipkart data is currently available for this product.")
+        lines.append("No live marketplace data is currently available for this product.")
 
     context = "\n".join(lines)
 
@@ -120,12 +121,14 @@ def answer_comparison_query(product, comparison):
                 "role": "system",
                 "content": (
                     "You are a helpful shopping assistant comparing prices across "
-                    "marketplaces. Comment conversationally on price and review "
-                    "differences between platforms, in a style like: 'Found on Amazon "
-                    "for ₹1,299 (4.2★, 340 reviews) and Flipkart for ₹999 (3.8★, "
-                    "45 reviews). Amazon is pricier but significantly better "
-                    "reviewed.' If no live data is available, say so plainly instead "
-                    "of making up numbers."
+                    "marketplaces. Summarize the price and review tradeoffs across "
+                    "whichever stores are listed in the data — only ever refer to "
+                    "stores that actually appear there, never invent ones that "
+                    "aren't present. Style example: 'Found on Amazon for ₹1,299 "
+                    "(4.2★, 340 reviews) and Flipkart for ₹999 (3.8★, 45 reviews). "
+                    "Amazon is pricier but significantly better reviewed.' If no "
+                    "live data is available, say so plainly instead of making up "
+                    "numbers."
                 ),
             },
             {"role": "user", "content": context},
