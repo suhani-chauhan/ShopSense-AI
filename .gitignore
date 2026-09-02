@@ -9,3 +9,4 @@ __pycache__/
 .DS_Store
 .claude/
 backend/price_cache.json
+backend/shopassist.db
