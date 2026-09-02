@@ -8,3 +8,7 @@ pillow
 streamlit
 groq
 python-dotenv
+fastapi
+uvicorn[standard]
+requests
+pydantic

@@ -38,9 +38,9 @@ def search_products(query, top_k=3):
     distances, indices = index.search(query_embedding, top_k)
 
     results = []
-    for idx in indices[0]:
+    for i, idx in enumerate(indices[0]):
         if idx != -1:
-            results.append(metadata[idx])
+            results.append({**metadata[idx], "distance": float(distances[0][i])})
     return results
 
 
@@ -75,7 +75,10 @@ Answer this question: {user_query}"""
         ]
     )
 
-    return response.choices[0].message.content
+    return {
+        "answer": response.choices[0].message.content,
+        "sources": [p["name"] for p in relevant_products],
+    }
 
 
 if __name__ == "__main__":
@@ -87,6 +90,8 @@ if __name__ == "__main__":
     ]
 
     for query in queries:
+        result = answer_query(query)
         print(f"\n❓ Query: {query}")
-        print(f"💬 Answer: {answer_query(query)}")
+        print(f"💬 Answer: {result['answer']}")
+        print(f"📎 Sources: {', '.join(result['sources'])}")
         print("-" * 50)

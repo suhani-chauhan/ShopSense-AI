@@ -1,15 +1,45 @@
 import os
-import sys
 
+import requests
 import streamlit as st
 
-# Ensure the repo root is on sys.path so `backend` can be imported as a
-# package regardless of the working directory `streamlit run` is invoked from.
-_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _REPO_ROOT not in sys.path:
-    sys.path.insert(0, _REPO_ROOT)
+API_BASE_URL = os.environ.get("API_BASE_URL", "http://localhost:8000")
 
-from backend.rag_pipeline import answer_query
+BACKEND_DOWN_MESSAGE = (
+    "Backend not running — start it with: uvicorn backend.main:app --reload"
+)
+
+
+def call_chat_api(query):
+    """POST query to the /chat endpoint. Returns (result, error_message)."""
+    try:
+        response = requests.post(
+            f"{API_BASE_URL}/chat", json={"query": query}, timeout=60
+        )
+        response.raise_for_status()
+        return response.json(), None
+    except requests.exceptions.ConnectionError:
+        return None, BACKEND_DOWN_MESSAGE
+    except requests.exceptions.HTTPError:
+        detail = response.json().get("detail", response.text)
+        return None, f"Backend error: {detail}"
+    except requests.exceptions.RequestException as e:
+        return None, f"Backend error: {e}"
+
+
+def render_answer(query):
+    with st.spinner("🔍 Searching products..."):
+        result, error = call_chat_api(query)
+
+    if error:
+        st.error(error)
+        return
+
+    st.header("💬 Answer")
+    st.write(result["answer"])
+    if result.get("sources"):
+        st.caption("Sources: " + ", ".join(result["sources"]))
+
 
 # Page config
 st.set_page_config(
@@ -39,10 +69,7 @@ query = st.text_input(
 
 if st.button("🔍 Search", type="primary"):
     if query:
-        with st.spinner("🔍 Searching products..."):
-            answer = answer_query(query)
-        st.header("💬 Answer")
-        st.write(answer)
+        render_answer(query)
     else:
         st.warning("Please enter a question!")
 
@@ -61,7 +88,4 @@ cols = st.columns(4)
 for i, example in enumerate(example_queries):
     with cols[i]:
         if st.button(example):
-            with st.spinner("Searching..."):
-                answer = answer_query(example)
-            st.header("💬 Answer")
-            st.write(answer)
+            render_answer(example)
