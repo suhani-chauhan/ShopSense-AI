@@ -1,7 +1,32 @@
+import { useState, type MouseEvent } from 'react'
 import { Star } from 'lucide-react'
 import type { Listing } from '../../api/types'
+import { resolveListingLink } from '../../api/endpoints'
+import { Spinner } from '../common/Spinner'
 
 export function ProductCard({ listing }: { listing: Listing }) {
+  const [resolving, setResolving] = useState(false)
+
+  // The href is always the Google Shopping fallback, so modified clicks
+  // (middle-click, ctrl/cmd-click, right-click "open in new tab") still work
+  // natively. A plain left-click is intercepted to resolve the real
+  // merchant URL first — costs one SerpAPI call, only on actual intent.
+  const handleClick = async (e: MouseEvent<HTMLAnchorElement>) => {
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+    if (!listing.page_token || !listing.store || resolving) return
+
+    e.preventDefault()
+    setResolving(true)
+    try {
+      const { url } = await resolveListingLink(listing.page_token, listing.store)
+      window.open(url ?? listing.url ?? undefined, '_blank', 'noopener,noreferrer')
+    } catch {
+      window.open(listing.url ?? undefined, '_blank', 'noopener,noreferrer')
+    } finally {
+      setResolving(false)
+    }
+  }
+
   const card = (
     <div className="flex h-full w-48 shrink-0 flex-col rounded-2xl border border-zinc-200 bg-white p-3 shadow-sm transition hover:border-violet-300 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-violet-700">
       {listing.image_url ? (
@@ -28,8 +53,9 @@ export function ProductCard({ listing }: { listing: Listing }) {
         )}
       </div>
 
-      <span className="mt-0.5 truncate text-xs text-zinc-500 dark:text-zinc-400">
+      <span className="mt-0.5 flex items-center gap-1.5 truncate text-xs text-zinc-500 dark:text-zinc-400">
         {listing.store ?? 'Unknown store'}
+        {resolving && <Spinner className="h-3 w-3" />}
       </span>
 
       {listing.rating != null && (
@@ -49,7 +75,7 @@ export function ProductCard({ listing }: { listing: Listing }) {
   if (!listing.url) return card
 
   return (
-    <a href={listing.url} target="_blank" rel="noopener noreferrer" className="block">
+    <a href={listing.url} target="_blank" rel="noopener noreferrer" className="block" onClick={handleClick}>
       {card}
     </a>
   )

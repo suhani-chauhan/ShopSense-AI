@@ -14,6 +14,8 @@ export interface Product {
 }
 
 // Listing.price/old_price are raw SerpAPI strings (e.g. "₹1,299"), not numbers.
+// `url` is a Google Shopping results page, not the merchant — page_token
+// lets the frontend resolve the real merchant link on demand (on click).
 export interface Listing {
   store: string | null
   title: string | null
@@ -22,13 +24,31 @@ export interface Listing {
   rating: number | null
   review_count: number | null
   url: string | null
+  page_token: string | null
   image_url: string | null
   delivery: string | null
+}
+
+// A real narrow-down chip computed from the returned result set. `count` is
+// an exact count of `products`; `filter` is applied server-side on a
+// follow-up turn (e.g. { subcategory: "Knitwear" }).
+export interface Facet {
+  label: string
+  count: number
+  filter: Record<string, string>
 }
 
 export interface ChatResponse {
   answer: string
   sources: string[]
+  products: Product[]
+  facets?: Facet[]
+  clarifying?: boolean
+  // The query that actually produced this answer — may be the raw query
+  // combined with an earlier turn if this resolved a clarifying question.
+  // Use this (not the previous message's raw content) when re-issuing the
+  // same search for a "Compare prices" click.
+  effective_query?: string
 }
 
 export interface CompareResponse {
@@ -41,15 +61,24 @@ export interface ChatImageResponse {
   caption: string
   answer: string
   sources: string[]
+  products: Product[]
+  facets?: Facet[]
+  clarifying?: boolean
+  effective_query?: string
 }
 
-// Shape varies by which endpoint produced the message: {sources} from /chat,
-// {product, listings} from /chat/compare, {caption, sources} from /chat/image.
+// Shape varies by which endpoint produced the message: {sources, products}
+// from /chat, {product, listings} from /chat/compare, {caption, sources,
+// products} from /chat/image.
 export interface MessageExtra {
   sources?: string[]
   caption?: string
+  products?: Product[]
   product?: Product
   listings?: Listing[]
+  facets?: Facet[]
+  clarifying?: boolean
+  effective_query?: string
 }
 
 export interface Message {

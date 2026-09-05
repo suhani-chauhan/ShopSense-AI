@@ -12,7 +12,7 @@ interface UseChatResult {
   messages: ChatMessage[]
   loadingHistory: boolean
   sending: boolean
-  send: (query: string) => Promise<void>
+  send: (query: string, facet?: Record<string, string> | null) => Promise<void>
   sendImage: (file: File) => Promise<void>
 }
 
@@ -113,12 +113,21 @@ export function useChat(
   )
 
   const send = useCallback(
-    async (query: string) => {
+    async (query: string, facet?: Record<string, string> | null) => {
       const trimmed = query.trim()
       if (!trimmed) return
       await runExchange(trimmed, async (id) => {
-        const result = await chat(trimmed, id)
-        return { content: result.answer, extra: { sources: result.sources } }
+        const result = await chat(trimmed, id, facet ?? null)
+        return {
+          content: result.answer,
+          extra: {
+            sources: result.sources,
+            products: result.products,
+            facets: result.facets,
+            clarifying: result.clarifying,
+            effective_query: result.effective_query,
+          },
+        }
       })
     },
     [runExchange],
@@ -130,7 +139,14 @@ export function useChat(
         const result = await chatImage(file, id)
         return {
           content: result.answer,
-          extra: { caption: result.caption, sources: result.sources },
+          extra: {
+            caption: result.caption,
+            sources: result.sources,
+            products: result.products,
+            facets: result.facets,
+            clarifying: result.clarifying,
+            effective_query: result.effective_query,
+          },
         }
       })
     },

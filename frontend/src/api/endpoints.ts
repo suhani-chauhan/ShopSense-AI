@@ -20,12 +20,24 @@ export function searchText(query: string, topK = 3) {
   return postJSON<Product[]>('/search/text', { query, top_k: topK })
 }
 
-export function chat(query: string, conversationId: number | null) {
-  return postJSON<ChatResponse>('/chat', { query, conversation_id: conversationId })
+export function chat(
+  query: string,
+  conversationId: number | null,
+  facet?: Record<string, string> | null,
+) {
+  return postJSON<ChatResponse>('/chat', {
+    query,
+    conversation_id: conversationId,
+    facet: facet ?? null,
+  })
 }
 
 export function chatCompare(query: string, conversationId: number | null) {
   return postJSON<CompareResponse>('/chat/compare', { query, conversation_id: conversationId })
+}
+
+export function resolveListingLink(pageToken: string, store: string) {
+  return postJSON<{ url: string | null }>('/resolve-listing-link', { page_token: pageToken, store })
 }
 
 export function chatImage(file: File, conversationId: number | null) {

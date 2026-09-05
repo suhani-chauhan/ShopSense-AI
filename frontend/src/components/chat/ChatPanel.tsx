@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import type { ChatMessage } from '../../hooks/useChat'
+import type { Facet } from '../../api/types'
 import { MessageBubble } from './MessageBubble'
 import { EmptyState } from './EmptyState'
 import { Spinner } from '../common/Spinner'
@@ -9,9 +10,16 @@ interface ChatPanelProps {
   conversationId: number | null
   loadingHistory: boolean
   onExampleClick: (text: string) => void
+  onFacetClick?: (facet: Facet) => void
 }
 
-export function ChatPanel({ messages, conversationId, loadingHistory, onExampleClick }: ChatPanelProps) {
+export function ChatPanel({
+  messages,
+  conversationId,
+  loadingHistory,
+  onExampleClick,
+  onFacetClick,
+}: ChatPanelProps) {
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -34,6 +42,10 @@ export function ChatPanel({ messages, conversationId, loadingHistory, onExampleC
     <div className="h-full overflow-y-auto px-6 py-6">
       <div className="mx-auto max-w-3xl space-y-4">
         {messages.map((message, i) => {
+          // Legacy fallback only — MessageBubble prefers message.extra.effective_query
+          // (the query the backend actually answered), since the immediately
+          // preceding message can be a bare clarifying-question reply like "women"
+          // rather than the real query.
           const userQuery = message.role === 'assistant' ? (messages[i - 1]?.content ?? null) : null
           return (
             <MessageBubble
@@ -41,6 +53,7 @@ export function ChatPanel({ messages, conversationId, loadingHistory, onExampleC
               message={message}
               conversationId={conversationId}
               userQuery={userQuery}
+              onFacetClick={onFacetClick}
             />
           )
         })}

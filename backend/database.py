@@ -133,6 +133,55 @@ def get_conversation_messages(conversation_id):
         conn.close()
 
 
+def get_last_two_messages(conversation_id):
+    """The two most recent messages in a conversation, oldest first (so
+    typically [user, assistant]). Fewer than 2 (or []) if the conversation
+    doesn't have that many yet.
+    """
+    conn = get_connection()
+    try:
+        rows = conn.execute(
+            "SELECT id, role, content, extra_json, created_at FROM messages "
+            "WHERE conversation_id = ? ORDER BY id DESC LIMIT 2",
+            (conversation_id,),
+        ).fetchall()
+        messages = []
+        for row in rows:
+            message = dict(row)
+            extra_json = message.pop("extra_json")
+            message["extra"] = json.loads(extra_json) if extra_json else None
+            messages.append(message)
+        messages.reverse()
+        return messages
+    finally:
+        conn.close()
+
+
+def get_recent_messages(conversation_id, limit=6):
+    """The most recent `limit` messages in a conversation, oldest first, as
+    lightweight {role, content, extra} dicts. Fed back into the model so
+    follow-ups ("show me more of those", "the third one") can resolve
+    against what was already said.
+    """
+    conn = get_connection()
+    try:
+        rows = conn.execute(
+            "SELECT role, content, extra_json FROM messages "
+            "WHERE conversation_id = ? ORDER BY id DESC LIMIT ?",
+            (conversation_id, limit),
+        ).fetchall()
+        messages = []
+        for row in rows:
+            message = dict(row)
+            extra_json = message.pop("extra_json")
+            message["extra"] = json.loads(extra_json) if extra_json else None
+            messages.append(message)
+        messages.reverse()
+        return messages
+    finally:
+        conn.close()
+
+
 def delete_conversation(conversation_id):
     conn = get_connection()
     try:

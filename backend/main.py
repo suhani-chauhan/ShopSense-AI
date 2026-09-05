@@ -17,21 +17,24 @@ async def lifespan(app: FastAPI):
     # Import (and thereby load the FAISS index, metadata, embedding model,
     # and BLIP captioning model) once at startup rather than per-request.
     from backend.image_to_text import describe_image
-    from backend.price_compare import get_shopping_comparison
+    from backend.price_compare import get_shopping_comparison, resolve_direct_link
     from backend.rag_pipeline import (
         answer_comparison_query,
         answer_query,
         metadata,
         search_products,
+        search_products_smart,
     )
 
     database.init_db()
 
     app.state.search_products = search_products
+    app.state.search_products_smart = search_products_smart
     app.state.answer_query = answer_query
     app.state.answer_comparison_query = answer_comparison_query
     app.state.describe_image = describe_image
     app.state.get_shopping_comparison = get_shopping_comparison
+    app.state.resolve_direct_link = resolve_direct_link
     app.state.products_loaded = len(metadata)
 
     yield
@@ -60,11 +63,19 @@ class SearchRequest(BaseModel):
 class ChatRequest(BaseModel):
     query: str
     conversation_id: Optional[int] = None
+    # A narrow-down facet chosen from the previous turn's facet chips, e.g.
+    # {"subcategory": "Knitwear"}. Only honoured when conversation_id is set.
+    facet: Optional[dict] = None
 
 
 class CompareRequest(BaseModel):
     query: str
     conversation_id: Optional[int] = None
+
+
+class ResolveLinkRequest(BaseModel):
+    page_token: str
+    store: str
 
 
 class SaveProductRequest(BaseModel):
@@ -111,6 +122,28 @@ def search_text(body: SearchRequest, request: Request):
     return request.app.state.search_products(body.query, top_k=body.top_k)
 
 
+def _effective_query(body: ChatRequest) -> tuple[str, bool]:
+    """If the previous assistant turn asked a clarifying question, fold this
+    turn's reply (e.g. "for women") into that original query so the follow-up
+    search actually applies it, instead of searching on "for women" alone.
+    Returns (query_to_search, force) — force=True skips asking again.
+    """
+    if body.conversation_id is None:
+        return body.query, False
+
+    last_two = database.get_last_two_messages(body.conversation_id)
+    if len(last_two) == 2:
+        prev_user, prev_assistant = last_two
+        if (
+            prev_assistant["role"] == "assistant"
+            and prev_user["role"] == "user"
+            and (prev_assistant["extra"] or {}).get("clarifying")
+        ):
+            return f"{prev_user['content']} {body.query}", True
+
+    return body.query, False
+
+
 @app.post("/chat")
 def chat(body: ChatRequest, request: Request):
     if not body.query.strip():
@@ -118,10 +151,30 @@ def chat(body: ChatRequest, request: Request):
 
     _require_conversation(body.conversation_id)
 
+    query, force = _effective_query(body)
+
+    # Feed the last few turns back into the model so follow-ups resolve.
+    # Behaviour is unchanged when no conversation_id is supplied.
+    history = (
+        database.get_recent_messages(body.conversation_id, limit=6)
+        if body.conversation_id is not None
+        else None
+    )
+
     try:
-        result = request.app.state.answer_query(body.query)
+        result = request.app.state.answer_query(
+            query, force=force, history=history, facet=body.facet
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Groq request failed: {e}") from e
+
+    # The query that actually produced this answer — may be `body.query`
+    # combined with an earlier turn (see _effective_query). Persisted and
+    # returned so a later "Compare prices" click on this exact message
+    # searches on what was actually answered, not just the previous message
+    # in the thread (which, after a clarification exchange, can be a bare
+    # one-word reply like "women").
+    result["effective_query"] = query
 
     if body.conversation_id is not None:
         _persist_exchange(
@@ -129,7 +182,13 @@ def chat(body: ChatRequest, request: Request):
             body.query,
             result["answer"],
             title_seed=body.query,
-            extra={"sources": result.get("sources")},
+            extra={
+                "sources": result.get("sources"),
+                "products": result.get("products"),
+                "clarifying": result.get("clarifying", False),
+                "effective_query": query,
+                "facets": result.get("facets"),
+            },
         )
 
     return result
@@ -142,7 +201,7 @@ def chat_compare(body: CompareRequest, request: Request):
 
     _require_conversation(body.conversation_id)
 
-    results = request.app.state.search_products(body.query, top_k=1)
+    results = request.app.state.search_products_smart(body.query, top_k=1)["results"]
     if not results:
         raise HTTPException(status_code=404, detail="No matching product found.")
 
@@ -166,6 +225,15 @@ def chat_compare(body: CompareRequest, request: Request):
     return {"product": top_product, "listings": listings, "answer": answer}
 
 
+@app.post("/resolve-listing-link")
+def resolve_listing_link(body: ResolveLinkRequest, request: Request):
+    if not body.page_token.strip() or not body.store.strip():
+        raise HTTPException(status_code=400, detail="page_token and store must not be empty.")
+
+    url = request.app.state.resolve_direct_link(body.page_token, body.store)
+    return {"url": url}
+
+
 @app.post("/search/image")
 def search_image(
     request: Request,
@@ -187,8 +255,14 @@ def chat_image(
 
     caption = _caption_from_upload(file, request.app.state.describe_image)
 
+    history = (
+        database.get_recent_messages(conversation_id, limit=6)
+        if conversation_id is not None
+        else None
+    )
+
     try:
-        result = request.app.state.answer_query(caption)
+        result = request.app.state.answer_query(caption, history=history)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Groq request failed: {e}") from e
 
@@ -198,10 +272,17 @@ def chat_image(
             f"[Image search] {caption}",
             result["answer"],
             title_seed=caption,
-            extra={"caption": caption, "sources": result.get("sources")},
+            extra={
+                "caption": caption,
+                "sources": result.get("sources"),
+                "products": result.get("products"),
+                "clarifying": result.get("clarifying", False),
+                "effective_query": caption,
+                "facets": result.get("facets"),
+            },
         )
 
-    return {"caption": caption, **result}
+    return {"caption": caption, "effective_query": caption, **result}
 
 
 @app.post("/conversations")

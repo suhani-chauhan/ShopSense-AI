@@ -48,7 +48,12 @@ def _extract_listing(item):
         "old_price": item.get("old_price"),
         "rating": item.get("rating"),
         "review_count": item.get("reviews"),
+        # Google Shopping's own link/product_link both point to a Google
+        # results page, not the merchant — kept as a fallback for when the
+        # real link can't be resolved. page_token lets the frontend ask for
+        # the real one on demand (see resolve_direct_link below).
         "url": item.get("product_link") or item.get("link"),
+        "page_token": item.get("immersive_product_page_token"),
         "image_url": item.get("thumbnail"),
         "delivery": item.get("delivery"),
     }
@@ -134,3 +139,55 @@ def get_shopping_comparison(product_name: str, num_results: int = 5) -> list:
             break
 
     return listings
+
+
+def resolve_direct_link(page_token: str, store: str) -> str | None:
+    """Resolve a listing's real merchant URL (e.g. an actual amazon.in
+    product page) instead of the Google Shopping results page every listing
+    otherwise links to. Costs one extra SerpAPI call, so this is meant to be
+    called on demand for a single clicked card — not eagerly for every
+    listing shown. Cached by page_token; never raises, returns None on any
+    failure or if the store can't be matched in the response.
+    """
+    cache_key = f"link:{page_token}"
+    cache = _load_cache()
+    cached = cache.get(cache_key)
+    if cached and (time.time() - cached.get("timestamp", 0)) < CACHE_TTL_SECONDS:
+        return cached.get("url")
+
+    api_key = os.environ.get("SERPAPI_KEY")
+    if not api_key:
+        logger.error("SERPAPI_KEY is not set — cannot resolve a direct merchant link.")
+        return None
+
+    try:
+        response = requests.get(
+            SERPAPI_URL,
+            params={
+                "engine": "google_immersive_product",
+                "page_token": page_token,
+                "api_key": api_key,
+            },
+            timeout=30,
+        )
+        response.raise_for_status()
+        data = response.json()
+    except requests.exceptions.RequestException as e:
+        logger.error("SerpAPI immersive-product request failed for store %r: %s", store, e)
+        return None
+
+    if data.get("error"):
+        logger.error("SerpAPI returned an error resolving %r: %s", store, data["error"])
+        return None
+
+    stores = (data.get("product_results") or {}).get("stores") or []
+    store_lower = (store or "").lower()
+    resolved_url = next(
+        (s.get("link") for s in stores if (s.get("name") or "").lower() == store_lower),
+        None,
+    )
+
+    cache[cache_key] = {"timestamp": time.time(), "url": resolved_url}
+    _save_cache(cache)
+
+    return resolved_url
