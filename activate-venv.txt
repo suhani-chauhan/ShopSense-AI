@@ -1,0 +1,18 @@
+How to activate the Python virtual environment for ShopSense AI
+================================================================
+
+Open PowerShell in the project folder (D:\ShopSense AI) and run:
+
+    Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
+    & "d:\ShopSense AI\venv\Scripts\Activate.ps1"
+
+After this your prompt shows (venv) and "python" points to:
+    D:\ShopSense AI\venv\Scripts\python.exe   (Python 3.11.9)
+
+To leave the virtual environment:
+
+    deactivate
+
+If you skip activation you can still use the venv directly, e.g.:
+
+    & "d:\ShopSense AI\venv\Scripts\python.exe" -m uvicorn backend.main:app --reload

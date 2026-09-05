@@ -1,0 +1,179 @@
+====================================================================
+ ShopSense AI — Tech Stack & Technologies Used (as of 2026-09-03)
+====================================================================
+
+An AI shopping assistant built on multimodal Retrieval-Augmented
+Generation (RAG). Text or image queries -> semantic product search ->
+LLM-generated shopping advice, plus live multi-store price comparison.
+
+Architecture: two processes
+  - FastAPI backend (search + RAG + price compare + persistence)  :8000
+  - React (Vite) single-page frontend                             :5173
+  - Legacy Streamlit UI still in repo (ui/app.py)                 :8501
+
+
+--------------------------------------------------------------------
+1. LANGUAGES
+--------------------------------------------------------------------
+  - Python 3.11.9          (backend, data pipeline, eval)
+  - TypeScript ~6.0        (frontend)
+  - HTML / CSS             (frontend)
+  - SQL (SQLite dialect)   (persistence)
+
+
+--------------------------------------------------------------------
+2. BACKEND — API LAYER
+--------------------------------------------------------------------
+  - FastAPI 0.141.1            REST API framework
+  - Uvicorn 0.52.4             ASGI server  (uvicorn[standard])
+      + httptools, websockets, watchfiles, python-dotenv
+  - Starlette 1.6.0            ASGI toolkit / CORS middleware (via FastAPI)
+  - Pydantic 2.13.5            request/response schemas & validation
+  - python-multipart 0.0.32   multipart form / image upload parsing
+
+  Endpoints: /health, /search/text, /search/image, /chat, /chat/image,
+  /chat/compare, /resolve-listing-link, /conversations (CRUD),
+  /saved-products (CRUD)
+
+
+--------------------------------------------------------------------
+3. BACKEND — RAG / MACHINE LEARNING
+--------------------------------------------------------------------
+  - sentence-transformers 6.0.1   text embeddings
+        model: all-MiniLM-L6-v2  (384-dimensional vectors)
+  - faiss-cpu 1.15.0              vector similarity index
+        IndexFlatL2, 3,038 product vectors
+  - transformers 5.16.1           image captioning (multimodal input)
+        model: Salesforce/blip-image-captioning-base (BLIP)
+  - torch 2.13.0                  deep-learning runtime for the models
+  - Pillow 12.3.0                 image decoding / RGB conversion
+  - NumPy 2.4.6                   vector math
+  - scikit-learn 1.9.0, scipy 1.17.1   (transitive ML deps)
+  - Hugging Face Hub 1.29.0, tokenizers, safetensors   model download/load
+
+  Retrieval strategy (backend/rag_pipeline.py):
+    - Dense FAISS search, oversampled 6x
+    - Rule-based query intent extraction (gender / kids sub-group via regex)
+    - Hybrid re-rank: hard gender filter + lexical keyword boost
+    - Ambiguity + low-confidence detection -> asks a clarifying question
+
+
+--------------------------------------------------------------------
+4. LLM / GENERATIVE AI
+--------------------------------------------------------------------
+  - Groq 1.7.0                Python client for the Groq API
+        model: openai/gpt-oss-20b
+        used for: shopping answers, price-comparison summaries
+  - Prompt design: system + retrieved-product context injection
+
+
+--------------------------------------------------------------------
+5. EXTERNAL APIS / INTEGRATIONS
+--------------------------------------------------------------------
+  - Groq API                 chat completions (needs GROQ_API_KEY)
+  - SerpAPI                   live price comparison (needs SERPAPI_KEY)
+        engine: google_shopping           (multi-store listings, gl=in)
+        engine: google_immersive_product  (resolve real merchant URL)
+  - requests 2.34.2          HTTP client
+  - File-based JSON cache    backend/price_cache.json, 24-hour TTL
+  - Graceful degradation: missing key / network error -> empty results
+
+
+--------------------------------------------------------------------
+6. PERSISTENCE
+--------------------------------------------------------------------
+  - SQLite 3                 via Python stdlib sqlite3
+        db file: backend/shopassist.db
+        tables : conversations, messages, saved_products
+        stores chat history + per-message extras (sources, products,
+        listings, clarifying flag) as JSON columns
+
+
+--------------------------------------------------------------------
+7. DATA PIPELINE  (data_pipeline/)
+--------------------------------------------------------------------
+  - pandas 3.0.5             CSV curation, cleaning, feature building
+  - NumPy                    embedding array storage (.npy)
+  - Scripts (run in order):
+        01_curate.py            select source rows
+        02_preprocess.py        clean fields, price buckets, build
+                                the embeddable "description" text
+        03_build_embeddings.py  MiniLM encode -> product_embeddings.npy
+        04_build_faiss_index.py build FAISS index + metadata pickle
+  - Dataset: ~3,038 fashion products (name, brand, gender, category,
+    subcategory, price, price_range, description, image_url, product_url)
+  - Artifacts: backend/product_index.faiss, backend/product_metadata.pkl
+
+
+--------------------------------------------------------------------
+8. FRONTEND — CURRENT (React SPA)
+--------------------------------------------------------------------
+  - React 19.2 + React DOM 19.2
+  - TypeScript ~6.0
+  - Vite 8.2                 dev server + bundler (host 127.0.0.1:5173)
+  - @vitejs/plugin-react 6
+  - Tailwind CSS v4.3        via @tailwindcss/vite plugin
+  - @tailwindcss/typography  prose styling for AI markdown answers
+  - PostCSS 8.5 + autoprefixer 10.5
+  - react-router-dom 7.18    pages: Chat, Saved Products, Settings, About
+  - react-markdown 10.1 + remark-gfm 4   render LLM markdown responses
+  - lucide-react             icon set
+  - clsx                     conditional class names
+  - oxlint 1.79              linter (npm run lint)
+
+  App structure:
+    - Context API: ThemeContext (class-based dark mode), ConversationsContext
+    - Hooks: useChat, useSavedProducts
+    - API layer: typed fetch wrapper (client.ts) with AbortController
+      timeout, custom ApiRequestError, endpoints.ts, types.ts
+    - Components: chat panel, message bubbles, product cards / carousel /
+      results grid, price-comparison table, AI advice panel, save button
+
+
+--------------------------------------------------------------------
+9. FRONTEND — LEGACY / ALTERNATE
+--------------------------------------------------------------------
+  - Streamlit 1.63.0         original UI (ui/app.py), still in repo
+      + altair, pydeck, pyarrow, narwhals (Streamlit deps)
+
+
+--------------------------------------------------------------------
+10. EVALUATION / BENCHMARKING  (eval/)
+--------------------------------------------------------------------
+  - Custom retrieval eval harness (pure Python / stdlib)
+        queries.py              test query set
+        generate_candidates.py  run retrieval, dump candidates.json
+        evaluate.py             Precision@5, Precision@10, Recall@10, MRR
+                                -> eval/results.md
+        benchmark_latency.py    retrieval latency benchmark
+                                -> eval/latency_results.md
+  - Hand-labeled relevance judgments in candidates.json
+
+
+--------------------------------------------------------------------
+11. CONFIG / TOOLING / ENVIRONMENT
+--------------------------------------------------------------------
+  - python-dotenv            .env / .env.example  (GROQ_API_KEY, SERPAPI_KEY)
+  - venv                     Python virtual environment (venv/)
+  - pip + requirements.txt   Python dependency management
+  - npm + package.json / package-lock.json   frontend deps
+  - Git + GitHub             version control
+  - Windows 11 / PowerShell  dev environment
+  - Node.js                  frontend build/runtime (@types/node 24)
+
+
+--------------------------------------------------------------------
+12. END-TO-END REQUEST FLOWS
+--------------------------------------------------------------------
+  Text chat:
+    query -> MiniLM embed -> FAISS search -> hybrid re-rank
+          -> product context -> Groq LLM -> answer (+ sources, products)
+          -> persisted to SQLite
+
+  Image chat:
+    upload (JPEG/PNG) -> BLIP caption -> (same pipeline as text chat)
+
+  Price comparison:
+    query -> smart search (top product) -> SerpAPI Google Shopping
+          -> per-store listings -> Groq summary -> persisted
+          -> on card click: SerpAPI immersive-product -> real merchant URL
